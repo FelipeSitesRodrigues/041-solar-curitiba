@@ -368,7 +368,8 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
 .selos li{text-align:center;}
 .selos svg{width:28px;height:28px;color:var(--azul-claro);margin:0 auto 9px;}
 .selos span{display:block;font-family:var(--display);font-weight:600;font-size:12px;
-  text-transform:uppercase;letter-spacing:.075em;line-height:1.35;color:var(--tinta);}
+  text-transform:uppercase;letter-spacing:.075em;line-height:1.35;color:var(--tinta);
+  min-height:4.05em;} /* reserva 3 linhas pra fileira ficar alinhada */
 
 /* ==========================================================================
    DEPOIMENTOS

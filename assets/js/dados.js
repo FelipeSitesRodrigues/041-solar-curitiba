@@ -11,7 +11,7 @@
 const CONFIG = {
   whatsapp: '5541999763827',
   whatsappVisivel: '(41) 99976-3827',
-  email: 'contato@curitibaenergiasolar.com.br',   // PENDENTE confirmar
+  email: 'claudinei@acdsolaretech.com.br',
   endereco: 'Curitiba e região metropolitana - PR', // PENDENTE endereço exato
   horario: 'Seg a Sex: 8h30 às 18h · Sáb: 8h30 às 13h', // PENDENTE confirmar
   instagram: 'https://instagram.com/curitibasolar_',
@@ -23,10 +23,10 @@ const CONFIG = {
    PARÂMETROS DO SIMULADOR
    Calibrados contra os projetos que a empresa publica: 10 painéis de 640W
    (6,4 kWp) em Santa Felicidade deram R$ 533/mês no post e R$ 534 nesta conta.
-   Se a Copel reajustar, muda só a tarifa aqui embaixo.
+   Se a concessionária reajustar, muda só a tarifa aqui embaixo.
    -------------------------------------------------------------------------- */
 const PARAMS = {
-  tarifa: 0.89,          // R$/kWh, tarifa Copel B1 com impostos
+  tarifa: 0.89,          // R$/kWh, tarifa residencial B1 com impostos
   performance: 0.78,     // perdas de inversor, cabo, temperatura e sujeira
   potenciaPainel: 620,   // watts por painel
   areaPainel: 2.58,      // m² por painel (2,28 x 1,13)

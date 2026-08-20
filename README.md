@@ -23,7 +23,7 @@ Quase tudo que muda com o tempo está em `assets/js/dados.js`:
 | O quê | Onde |
 |---|---|
 | WhatsApp, e-mail, endereço, horário, redes | `CONFIG` |
-| Tarifa da Copel, potência do painel, perdas | `PARAMS` |
+| Tarifa da concessionária, potência do painel, perdas | `PARAMS` |
 | Cidades atendidas e irradiação (HSP) | `CIDADES` |
 | Obras entregues (foto, bairro, ficha técnica) | `OBRAS` |
 | Nota do Google e depoimentos | `AVALIACAO` e `DEPOIMENTOS` |
@@ -44,6 +44,6 @@ Roda inteiro no navegador. Não envia nem armazena dado nenhum do visitante.
 ## Pendências antes de publicar
 
 - Depoimentos e nota do Google são exemplo de layout, trocar pelos reais
-- E-mail, endereço e horário do rodapé são provisórios
+- Endereço e horário do rodapé ainda são provisórios
 - 3 dos 5 cards de obra estão com a ficha técnica incompleta
-- Confirmar a tarifa Copel vigente para calibrar o simulador
+- Confirmar a tarifa vigente da concessionária para calibrar o simulador
