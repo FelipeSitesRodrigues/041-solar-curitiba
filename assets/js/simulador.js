@@ -2,12 +2,23 @@
    Simulador de dimensionamento solar
    Roda inteiro no navegador. Não envia nem guarda dado nenhum.
 
-   consumo (kWh/mês)  = valor da conta / tarifa
-   excedente          = consumo - taxa mínima da ligação
-   kWp necessário     = (excedente / 30) / (HSP x performance)
-   nº de painéis      = arredonda pra cima (kWp x 1000 / potência do painel)
-   economia/mês       = excedente x tarifa
-   área no telhado    = nº painéis x área do painel x folga
+   DIMENSIONAMENTO
+   consumo (kWh/mês) = (conta - iluminação pública) / tarifa
+   excedente         = consumo - custo de disponibilidade da ligação
+   kWp necessário    = (excedente / 30) / (HSP x performance)
+   nº de painéis     = arredonda pra cima (kWp x 1000 / potência do painel)
+   área no telhado   = nº painéis x área do painel x folga
+
+   O QUE CONTINUA NA CONTA DEPOIS DO SISTEMA INSTALADO
+   custo de disponibilidade = kWh mínimos da ligação x tarifa
+   iluminação pública       = taxa fixa do município
+   Fio B (Lei 14.300)       = energia injetada x Fio B x percentual do ano
+
+   conta nova = disponibilidade + iluminação pública + Fio B
+   economia   = conta atual - conta nova
+
+   Sem os dois últimos itens o cálculo prometia economia de 95%, que não
+   acontece na prática. Com eles, cai para a faixa real de 78% a 85%.
    ========================================================================== */
 (function () {
   'use strict';
@@ -31,7 +42,11 @@
     area: document.getElementById('r-area'),
     economia: document.getElementById('r-economia'),
     contaAtual: document.getElementById('r-conta-atual'),
-    contaNova: document.getElementById('r-conta-nova')
+    contaNova: document.getElementById('r-conta-nova'),
+    percentual: document.getElementById('r-percentual'),
+    disponibilidade: document.getElementById('r-disponibilidade'),
+    cosip: document.getElementById('r-cosip'),
+    fiob: document.getElementById('r-fiob')
   };
 
   const reais = (v) => 'R$ ' + Math.round(v).toLocaleString('pt-BR');
@@ -55,25 +70,35 @@
     const cidade = CIDADES.find(function (c) { return c.nome === cidadeNome; });
     const hsp = cidade ? cidade.hsp : CIDADES[0].hsp;
 
-    const consumo = conta / PARAMS.tarifa;
-    const taxaMinima = PARAMS.taxaMinima[ligacao];
-    const excedente = Math.max(0, consumo - taxaMinima);
+    // energia de fato consumida, tirando a taxa de iluminação pública
+    const consumo = Math.max(0, (conta - PARAMS.cosip)) / PARAMS.tarifa;
+    const minimoKwh = PARAMS.taxaMinima[ligacao];
+    const excedente = Math.max(0, consumo - minimoKwh);
 
     const kwpNecessario = (excedente / 30) / (hsp * PARAMS.performance);
     const paineis = Math.max(2, Math.ceil((kwpNecessario * 1000) / PARAMS.potenciaPainel));
     const kwpReal = (paineis * PARAMS.potenciaPainel) / 1000;
-
     const geracaoMes = kwpReal * hsp * 30 * PARAMS.performance;
-    const economiaMes = excedente * PARAMS.tarifa;
-    const contaNova = Math.max(0, conta - economiaMes);
     const area = paineis * PARAMS.areaPainel * PARAMS.folgaArea;
+
+    // o que sobra na fatura todo mês, mesmo com o sistema gerando
+    const custoDisponibilidade = minimoKwh * PARAMS.tarifa;
+    const energiaInjetada = geracaoMes * PARAMS.fracaoInjetada;
+    const custoFioB = energiaInjetada * PARAMS.fioB * PARAMS.percentualFioB;
+
+    const contaNova = Math.min(conta, custoDisponibilidade + PARAMS.cosip + custoFioB);
+    const economiaMes = Math.max(0, conta - contaNova);
+    const percentual = conta > 0 ? (economiaMes / conta) * 100 : 0;
 
     return {
       conta: conta, tipo: tipo, ligacao: ligacao,
       cidade: cidadeNome || '', hsp: hsp,
-      paineis: paineis, kwpReal: kwpReal, geracaoMes: geracaoMes,
+      paineis: paineis, kwpReal: kwpReal, geracaoMes: geracaoMes, area: area,
       economiaMes: economiaMes, economiaAno: economiaMes * 12,
-      contaNova: contaNova, area: area
+      contaNova: contaNova, percentual: percentual,
+      custoDisponibilidade: custoDisponibilidade,
+      cosip: PARAMS.cosip,
+      custoFioB: custoFioB
     };
   }
 
@@ -104,6 +129,10 @@
     el.area.textContent = Math.round(r.area);
     el.contaAtual.textContent = reais(r.conta);
     el.contaNova.textContent = reais(r.contaNova);
+    el.percentual.textContent = Math.round(r.percentual) + '% mais barata';
+    el.disponibilidade.textContent = reais(r.custoDisponibilidade);
+    el.cosip.textContent = reais(r.cosip);
+    el.fiob.textContent = reais(r.custoFioB);
 
     if (animarValor) pintarEconomia(r.economiaMes);
     else { el.economia.textContent = reais(r.economiaMes); economiaAtual = r.economiaMes; }
@@ -121,7 +150,9 @@
       'Ligação: ' + ligacoes[r.ligacao] + '\n' +
       'Conta de luz: ' + reais(r.conta) + ' por mês\n' +
       'Resultado: ' + r.paineis + ' painéis de ' + PARAMS.potenciaPainel + 'W, ' +
-      umaCasa(r.kwpReal) + ' kWp, economia de ' + reais(r.economiaMes) + ' por mês.\n' +
+      umaCasa(r.kwpReal) + ' kWp\n' +
+      'Economia estimada: ' + reais(r.economiaMes) + ' por mês (a conta cairia para ' +
+      reais(r.contaNova) + ')\n' +
       'Quero um orçamento.';
     return 'https://wa.me/' + CONFIG.whatsapp + '?text=' + encodeURIComponent(texto);
   }

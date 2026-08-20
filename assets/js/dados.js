@@ -21,18 +21,37 @@ const CONFIG = {
 
 /* --------------------------------------------------------------------------
    PARÂMETROS DO SIMULADOR
-   Calibrados contra os projetos que a empresa publica: 10 painéis de 640W
-   (6,4 kWp) em Santa Felicidade deram R$ 533/mês no post e R$ 534 nesta conta.
-   Se a concessionária reajustar, muda só a tarifa aqui embaixo.
+
+   A conta nova NÃO é só o custo de disponibilidade. Depois da Lei 14.300
+   sobra na fatura, todo mês:
+     1. custo de disponibilidade  (30 / 50 / 100 kWh conforme a ligação)
+     2. iluminação pública (COSIP) - taxa municipal, não tem como compensar
+     3. Fio B sobre a energia injetada na rede - a parcela da Lei 14.300,
+        que sobe de ano em ano até 2029
+
+   Ignorar os itens 2 e 3 é o que fazia o simulador prometer economia de 95%.
+   Com eles, a economia fica na faixa de 78% a 85%, que é o que se vê na
+   prática. Os três valores marcados como CONFIRMAR precisam ser checados
+   com a fatura real da concessionária.
    -------------------------------------------------------------------------- */
 const PARAMS = {
-  tarifa: 0.89,          // R$/kWh, tarifa residencial B1 com impostos
+  tarifa: 0.89,          // CONFIRMAR - R$/kWh, tarifa residencial B1 com impostos
   performance: 0.78,     // perdas de inversor, cabo, temperatura e sujeira
   potenciaPainel: 620,   // watts por painel
   areaPainel: 2.58,      // m² por painel (2,28 x 1,13)
   folgaArea: 1.15,       // espaçamento entre fileiras
-  reajusteAnual: 0.08,   // usado só na projeção de 25 anos
-  taxaMinima: { mono: 30, bi: 50, tri: 100 } // kWh de custo de disponibilidade
+  taxaMinima: { mono: 30, bi: 50, tri: 100 }, // kWh de custo de disponibilidade
+
+  cosip: 25.00,          // CONFIRMAR - iluminação pública, R$/mês (varia por município)
+
+  // Lei 14.300: paga-se um percentual do Fio B sobre a energia injetada.
+  // Cronograma da regra de transição: 2023=15% · 2024=30% · 2025=45%
+  //                                   2026=60% · 2027=75% · 2028=90% · 2029+=integral
+  fioB: 0.20,            // CONFIRMAR - R$/kWh do Fio B com impostos
+  percentualFioB: 0.60,  // 60% em 2026, subir junto com o cronograma acima
+  fracaoInjetada: 0.80   // parte da geração que vai pra rede em vez de ser
+                         // consumida na hora. 80% é uma hipótese conservadora
+                         // para residência (quanto maior, menor a economia)
 };
 
 /* --------------------------------------------------------------------------

@@ -298,6 +298,26 @@ svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-l
   text-shadow:0 0 44px rgba(255,194,32,.55);margin-block:2px;}
 .economia__nota{font-family:var(--mono);font-size:13.5px;color:#B9CBE4;}
 .economia__nota b{color:var(--branco);font-weight:700;}
+.economia__pct{display:block;margin-top:6px;font-family:var(--display);font-weight:700;
+  font-size:14px;text-transform:uppercase;letter-spacing:.14em;color:var(--amarelo);}
+
+/* ---------- o que continua na conta ---------- */
+.detalhe{margin-top:18px;border:1px solid var(--azul-linha);border-radius:var(--raio);
+  background:rgba(255,255,255,.035);}
+.detalhe summary{cursor:pointer;padding:11px 14px;list-style:none;
+  font-family:var(--display);font-weight:600;font-size:14px;text-transform:uppercase;
+  letter-spacing:.11em;color:#CBDAF0;display:flex;align-items:center;justify-content:space-between;
+  gap:10px;transition:color var(--transicao);}
+.detalhe summary:hover{color:var(--amarelo);}
+.detalhe summary::-webkit-details-marker{display:none;}
+.detalhe summary::after{content:'+';font-family:var(--mono);font-size:17px;color:var(--amarelo);
+  line-height:1;}
+.detalhe[open] summary::after{content:'−';}
+.detalhe__lista{padding:2px 14px 0;}
+.detalhe__lista li{display:flex;justify-content:space-between;align-items:baseline;gap:12px;
+  padding:7px 0;border-top:1px solid var(--azul-linha);font-size:13px;color:#B9CBE4;}
+.detalhe__lista b{font-family:var(--mono);font-weight:700;color:var(--branco);white-space:nowrap;}
+.detalhe__nota{padding:10px 14px 14px;font-size:12px;line-height:1.55;color:#8FA6C6;}
 
 .sim-resultado .botao{margin-top:22px;}
 .sim-resultado__aviso{margin-top:12px;font-size:12.5px;color:#8FA6C6;text-align:center;}
